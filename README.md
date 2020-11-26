@@ -1,14 +1,10 @@
-## Getting Started
+## Project  Introduction
 
-Welcome to the VS Code Java world. Here is a guideline to help you get started to write Java code in Visual Studio Code.
+A multi-threaded web server with thread-pooling implemented in Java.
 
-## Folder Structure
+## How to use the project
 
-The workspace contains two folders by default, where:
-
-- `src`: the folder to maintain sources
-- `lib`: the folder to maintain dependencies
-
-## Dependency Management
-
-The `JAVA DEPENDENCIES` view allows you to manage your dependencies. More details can be found [here](https://github.com/microsoft/vscode-java-pack/blob/master/release-notes/v0.9.0.md#work-with-jar-files-directly).
+1. run the HttpServer
+2. send http request to localhost
+   command example: curl -X POST -H "Content-Type:application/json" http://127.0.0.1:9999/test -d '{service: test}'
+   
