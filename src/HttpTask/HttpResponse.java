@@ -78,8 +78,8 @@ public class HttpResponse {
         setStatus("ok");
         setVersion(request.getVersion());
 
-        headers.put("contect-Length", String.valueOf(response.getBytes().length));
-        headers.put("Contect-Type", "application/json");
+        headers.put("content-Length", String.valueOf(response.getBytes().length));
+        headers.put("content-type", "application/json");
         
         setMessage(response);
 

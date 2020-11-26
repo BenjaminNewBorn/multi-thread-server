@@ -26,7 +26,7 @@ public class HttpRequest {
     /**
      * request http header
      */
-    private Map<String, String> headers;
+    private HashMap<String, String> headers;
 
     /**
      * request message
@@ -65,7 +65,7 @@ public class HttpRequest {
         return headers;
     }
 
-    public void setHeaders(Map<String, String> headers) {
+    public void setHeaders(HashMap<String, String> headers) {
         this.headers = headers;
     }
 
@@ -101,6 +101,10 @@ public class HttpRequest {
         BufferedReader reader = new BufferedReader(new InputStreamReader(requestStream, "UTF-8"));
         decodeRequestLine(reader);
         decodeRequestHeader(reader);
+    }
+
+    public boolean isKeepAlive() {
+        return  Boolean.parseBoolean(headers.getOrDefault("keep-Alive", "false"));
     }
 
 }
