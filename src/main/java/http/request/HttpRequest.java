@@ -1,13 +1,13 @@
 package http.request;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import constant.HttpConstant;
+import http.Cookie;
 import http.HttpMethod;
-
-
+import http.session.HttpSession;
 
 
 public class HttpRequest {
@@ -36,10 +36,16 @@ public class HttpRequest {
      */
     private String message;
 
-    // private HttpSession session;
+    private HttpSession session;
+
+
+    private Map<String, Cookie> cookies;
+
+    public HttpSession getSession() {
+        return session;
+    }
 
     private Map<String, List<String>> params;
-
 
     public HttpMethod getMethod() {
         return method;
@@ -98,34 +104,23 @@ public class HttpRequest {
         params.get(k).add(v);
     }
 
+    public void setSession(HttpSession session) {
+        this.session = session;
+        this.cookies.remove(HttpConstant.JSESSIONID);
+        this.cookies.put(HttpConstant.JSESSIONID, new Cookie(HttpConstant.JSESSIONID, session.getId()));
+    }
 
-    // private void decodeRequestLine(BufferedReader reader) throws IOException {
-    //     String[] strs = reader.readLine().split(" ");
-    //     assert strs.length == 3;
-    //     setMethod(strs[0]);
-    //     setUri(strs[1]);
-    //     setVersion(strs[2]);
-    // }
+    public Cookie getCookie(String key) {
+        return this.cookies.get(key);
+    }
 
+    public void setCookies(Map<String, Cookie> cookies) {
+        this.cookies = cookies;
+    }
 
-    // private void decodeRequestHeader(BufferedReader reader) throws IOException {
-    //     String line = reader.readLine();
-    //     while(!"".equals(line)) {
-    //         String[] strs = line.split(":");
-    //         assert strs.length == 2;
-    //         headers.put(strs[0].toLowerCase().trim(), strs[0].trim());
-    //         line = reader.readLine();
-    //     }
-    // }
+    public Map<String, Cookie> getCookies() {
+        return cookies;
+    }
 
-    // public void parseToRequest(InputStream requestStream) throws IOException {
-    //     BufferedReader reader = new BufferedReader(new InputStreamReader(requestStream, "UTF-8"));
-    //     decodeRequestLine(reader);
-    //     decodeRequestHeader(reader);
-    // }
-
-    // public boolean isKeepAlive() {
-    //     return  Boolean.parseBoolean(headers.getOrDefault("keep-Alive", "false"));
-    // }
 
 }

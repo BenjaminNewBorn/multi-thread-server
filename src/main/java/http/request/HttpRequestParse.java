@@ -3,10 +3,10 @@ package http.request;
 import connector.SocketWrapper;
 import constant.HttpConstant;
 import container.Container;
+import http.Cookie;
 import http.HttpMethod;
 
 import java.net.URLDecoder;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 
 public class HttpRequestParse {
@@ -16,6 +16,8 @@ public class HttpRequestParse {
         parseReqline(in, request);
         parseParams(in, request);
         parseHeaders(in, request);
+        parseCookies(in, request);
+        parseSession(container, request);
         parseBody(in, request);
         return request;
     }
@@ -67,4 +69,28 @@ public class HttpRequestParse {
             }
         }
     }
+
+    private static void parseCookies(Scanner in, HttpRequest request) {
+        Map<String , Cookie> cookieMap = new HashMap<>();
+        String hCookie = request.getHeader(HttpConstant.COOKIE);
+        if(hCookie != null) {
+            String[] strs =  hCookie.split(";");
+            for(String str : strs) {
+                String[] kv = str.split("=");
+                cookieMap.put(kv[0].trim(), new Cookie(kv[0].trim(), kv[1].trim()));
+            }
+        }
+        request.setCookies(cookieMap);
+    }
+
+    private static void parseSession(Container container, HttpRequest request) {
+        Cookie sessionId = request.getCookie(HttpConstant.JSESSIONID);
+        if(sessionId != null && container.getSession(sessionId.getValue()) != null) {
+            request.setSession(container.getSession(sessionId.getValue()));
+        } else {
+            request.setSession(container.createNewSession());
+        }
+
+    }
+
 }

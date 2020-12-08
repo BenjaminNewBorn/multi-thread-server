@@ -86,7 +86,7 @@ public class HttpServer {
         isRunning = false;
         logger.info("server closed");
         this.requestProcessor.shutdown();
-//        this.container.close();
+            this.container.close();
         try {
             server.close();
         }catch (IOException e){

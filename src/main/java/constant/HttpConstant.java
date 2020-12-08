@@ -13,6 +13,7 @@ public class HttpConstant {
     public static final String DATE = "Date";
     public static final String LOCATION = "Location";
     public static final String JSESSIONID = "JSESSIONID";
-
+    public static final String SET_COOKIE = "Set-Cookie";
+    public static final String COOKIE = "Cookie";
 
 }

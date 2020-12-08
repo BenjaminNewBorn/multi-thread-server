@@ -8,11 +8,12 @@ import java.util.UUID;
 
 public class HttpSession {
     private String sessionId;
-    private Map<String, Object> attributes;
+//    private Map<String, Object> attributes;
     private long createTime;
     private long lastAccessTime;
     private Container container;
     private boolean isNew;
+
 
     public HttpSession(Container container) {
         this.sessionId = UUID.randomUUID().toString();
@@ -45,5 +46,10 @@ public class HttpSession {
     public void setIsNew(boolean isNew) {
         this.isNew = isNew;
     }
-
+    /**
+     * the Session is invalid
+     * */
+    public void invalidate() {
+        container.invalidateSession(this);
+    }
 }
