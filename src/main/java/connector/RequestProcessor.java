@@ -11,6 +11,9 @@ import http.response.HttpStatus;
 import util.ErrorResponseUtil;
 
 
+import javax.swing.*;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
@@ -23,7 +26,7 @@ class RequestProcessor {
 
     private final static int REQUEST_THREAD_COUNT = Integer.parseInt(System.getProperty(ServerConfig.REQUEST_THREAD_COUNT));
 
-    private final String WEBAPP_PATH = RequestProcessor.class.getResource("/").toString().substring(5);
+    private final String WEBAPP_PATH = RequestProcessor.class.getResource("/").toString().substring(5) + "webapp/";
 
     private final Properties mime;
 
@@ -77,12 +80,45 @@ class RequestProcessor {
         private HttpResponse buildResponse(HttpRequest request){
             HttpResponse response;
             response = RequestProcessor.this.container.handle(request);
+
+            //static response
             if(response == null) {
-                response = new HttpResponse();
-                ErrorResponseUtil.sendErrorResponse(response, HttpStatus.SC_405);
+                response = processStaticResource(request);
             }
             return response;
         }
+
+        /**
+         * process static resource
+         * */
+        private HttpResponse processStaticResource(HttpRequest request) {
+            HttpResponse response = new HttpResponse();
+            String uri = request.getUri();
+            int idx = uri.indexOf('?');
+            String filename = uri.substring(1, idx == -1? uri.length(): idx);
+            filename = RequestProcessor.this.WEBAPP_PATH + filename;
+            System.out.println(filename);
+
+            String extName = filename.substring(filename.lastIndexOf('.') + 1);
+            response.setContentType(mime.getProperty(extName));
+            try(FileInputStream fin = new FileInputStream(filename)) {
+                response.setContentType(mime.getProperty(extName));
+                byte[] buffer = new byte[512];
+                int len;
+                while ((len = fin.read(buffer)) > 0) {
+                    response.getOutputSteam().write(buffer, 0, len);
+                }
+            } catch (FileNotFoundException e) {
+                ErrorResponseUtil.sendErrorResponse(response, HttpStatus.SC_400);
+                logger.warning(String.format("File not Found: %s" , filename));
+            } catch (IOException e) {
+                ErrorResponseUtil.sendErrorResponse(response, HttpStatus.SC_500);
+                logger.warning(String.format("Failed to read static file: %s", filename));
+            }
+
+            return response;
+        }
+
 
         private void writeResponse(HttpRequest request, HttpResponse response) {
             try{
@@ -93,6 +129,7 @@ class RequestProcessor {
                 e.printStackTrace();
             }
         }
+
 
         private void handleConnection(HttpRequest request) {
             String conn = request.getHeader(HttpConstant.CONNECTION);

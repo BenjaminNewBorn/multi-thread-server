@@ -31,7 +31,7 @@ public class Container {
 
     public HttpResponse handle(HttpRequest request) {
         int idx = request.getUri().indexOf('?');
-        int end = idx == 1? request.getUri().length(): idx;
+        int end = idx == -1? request.getUri().length(): idx;
         String target = request.getUri().substring(0, end);
 
         logger.info(String.format("Target Name: %s", target));
